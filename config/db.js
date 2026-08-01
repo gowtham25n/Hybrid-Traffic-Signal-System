@@ -14,27 +14,35 @@ const pool = mysql.createPool({
 });
 
 async function query(sql, paramsOrCallback, maybeCallback) {
+
     let params;
-    let cb;
+    let callback;
 
     if (typeof paramsOrCallback === "function") {
-        cb = paramsOrCallback;
+        callback = paramsOrCallback;
         params = [];
     } else {
         params = paramsOrCallback || [];
-        cb = maybeCallback;
+        callback = maybeCallback;
     }
 
     try {
+
         const [rows] = await pool.query(sql, params);
 
-        if (cb) return cb(null, rows);
+        if (callback) {
+            return callback(null, rows);
+        }
 
         return rows;
-    } catch (err) {
-        console.error(err);
 
-        if (cb) return cb(err);
+    } catch (err) {
+
+        console.error("Database Error:", err);
+
+        if (callback) {
+            return callback(err);
+        }
 
         throw err;
     }

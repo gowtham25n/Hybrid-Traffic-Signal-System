@@ -9,6 +9,10 @@ const {
     loadKnowledge
 } = require("./services/databaseKnowledge");
 
+const {
+    loadSchema
+} = require("./agents/schemaAgent");
+
 // =============================
 // Routes
 // =============================
@@ -40,6 +44,7 @@ app.use("/api", databaseRoutes);
 app.use("/api", recoveryRoutes);
 app.use("/api", memoryRoutes);
 app.use("/api", dbRoutes);
+
 // =============================
 
 const PORT = process.env.PORT || 3000;
@@ -54,7 +59,11 @@ async function startServer() {
 
         console.time("Server Startup");
 
+        console.log("\nLoading Database Knowledge...");
         await loadKnowledge();
+
+        console.log("Loading Schema Agent...");
+        await loadSchema();
 
         app.listen(PORT, () => {
 
@@ -68,7 +77,7 @@ async function startServer() {
 
     catch (err) {
 
-        console.error(err);
+        console.error("Startup Error:", err);
 
     }
 
